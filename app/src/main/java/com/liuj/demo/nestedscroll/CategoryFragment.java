@@ -87,6 +87,7 @@ public class CategoryFragment extends Fragment {
         }
 
         public void bindData(int pos) {
+//            itemView.setBackgroundColor(ColorUtils.getRandomColor());
             title.setText("item_" + pos);
         }
 

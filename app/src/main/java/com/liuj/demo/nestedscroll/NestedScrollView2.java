@@ -3,12 +3,16 @@ package com.liuj.demo.nestedscroll;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.NestedScrollingChild2;
 import android.support.v4.view.NestedScrollingParent2;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+
+import static android.support.v4.view.ViewCompat.TYPE_NON_TOUCH;
 
 /**
  * https://www.androiddesignpatterns.com/2018/01/experimenting-with-nested-scrolling.html#footnote4
@@ -45,6 +49,16 @@ public class NestedScrollView2 extends NestedScrollView implements NestedScrolli
     @Override
     public void onNestedScroll(
             @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+
+//        //如果已经滑到顶或底，则停止子view继续滚动。
+//        if (type == TYPE_NON_TOUCH && ((dyUnconsumed > 0 && !canScrollVertically(1))
+//                  || (dyUnconsumed < 0 && !canScrollVertically(-1)))) {
+//            if (target instanceof NestedScrollingChild2) {
+//                ((NestedScrollingChild2) target).stopNestedScroll(type);
+//                return;
+//            }
+//        }
+
         final int oldScrollY = getScrollY();
         scrollBy(0, dyUnconsumed);
         final int myConsumed = getScrollY() - oldScrollY;
@@ -95,4 +109,5 @@ public class NestedScrollView2 extends NestedScrollView implements NestedScrolli
     public int getNestedScrollAxes() {
         return parentHelper.getNestedScrollAxes();
     }
+
 }
