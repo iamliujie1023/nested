@@ -11,22 +11,17 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.LinearLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.id_stickynavlayout_headerview)
-    LinearLayout mIdStickynavlayoutHeaderview;
-
     @BindView(R.id.id_stickynavlayout_indicator)
     SimpleViewPagerIndicator mIdStickynavlayoutIndicator;
 
     @BindView(R.id.id_stickynavlayout_viewpager)
-    ViewPager mViewpager;
+    MyViewPage mViewpager;
 
     @BindView(R.id.id_stickynavlayout_container)
     BHomeStickNavLayout mIdStickynavlayoutContainer;
@@ -37,13 +32,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mIdStickynavlayoutIndicator.setTitles(TITLES);
-        mViewpager.setAdapter(new MyPageAdapter(getSupportFragmentManager()));
-        mViewpager.addOnPageChangeListener(mOnPageChangeListener);
         initView();
     }
 
     private void initView() {
+        mIdStickynavlayoutIndicator.setTitles(TITLES);
+        mIdStickynavlayoutIndicator.setCallback(mCallback);
+
+        mViewpager.setAdapter(new MyPageAdapter(getSupportFragmentManager()));
+        mViewpager.addOnPageChangeListener(mOnPageChangeListener);
+
         mIdStickynavlayoutContainer.post(new Runnable() {
             @Override
             public void run() {
@@ -67,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mViewpager.setLayoutParams(params);
                 mIdStickynavlayoutContainer.forceLayout();
+                mIdStickynavlayoutContainer.init();
             }
         });
 
@@ -87,25 +86,37 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private SimpleViewPagerIndicator.ICallback mCallback = new SimpleViewPagerIndicator.ICallback() {
+        @Override
+        public void onTitleClick(int pos) {
+            mViewpager.setCurrentItem(pos, true);
+        }
+    };
+
     static String[] TITLES = {"title1", "title2", "title3", "title4", "title5"};
 
-    private static class MyPageAdapter extends FragmentPagerAdapter {
+    public static class MyPageAdapter extends FragmentPagerAdapter {
+
+        private Fragment[] mFList;
 
         public MyPageAdapter(FragmentManager fm) {
             super(fm);
+            mFList = new Fragment[TITLES.length];
+            for (int i = 0; i < TITLES.length; i++) {
+                mFList[i] = CategoryFragment.newInstance();
+            }
         }
 
         @Override
         public Fragment getItem(int position) {
-            return CategoryFragment.newInstance();
+            return mFList[position];
         }
 
         @Override
         public int getCount() {
-            return TITLES.length;
+            return mFList.length;
         }
     }
-
 
     /**
      * @param activity

@@ -24,6 +24,9 @@ public class SimpleViewPagerIndicator extends LinearLayout {
     private Paint mPaint = new Paint();
     private int mTabWidth;
 
+    private ICallback mCallback;
+    private int mCurIndex = 0;
+
     public SimpleViewPagerIndicator(Context context) {
         this(context, null);
     }
@@ -32,6 +35,10 @@ public class SimpleViewPagerIndicator extends LinearLayout {
         super(context, attrs);
         mPaint.setColor(mIndicatorColor);
         mPaint.setStrokeWidth(9.0F);
+    }
+
+    public void setCallback(ICallback callback) {
+        mCallback = callback;
     }
 
     @Override
@@ -44,7 +51,6 @@ public class SimpleViewPagerIndicator extends LinearLayout {
         mTitles = titles;
         mTabCount = titles.length;
         generateTitleView();
-
     }
 
     public void setIndicatorColor(int indicatorColor) {
@@ -92,14 +98,30 @@ public class SimpleViewPagerIndicator extends LinearLayout {
             tv.setText(mTitles[i]);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
             tv.setLayoutParams(lp);
+            tv.setTag(i);
             tv.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    int pos = (int) v.getTag();
+                    dispathClick(pos);
+                    mCurIndex = pos;
                 }
             });
             addView(tv);
         }
+    }
+
+    private void dispathClick(int pos) {
+        if (pos == mCurIndex) {
+            return;
+        }
+        if (mCallback != null) {
+            mCallback.onTitleClick(pos);
+        }
+    }
+
+    public interface ICallback{
+        void onTitleClick(int pos);
     }
 
 }
