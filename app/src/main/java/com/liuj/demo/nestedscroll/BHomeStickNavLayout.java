@@ -45,9 +45,7 @@ public class BHomeStickNavLayout extends NestedScrollView2  {
                 + "getScrollY=" + getScrollY() +
                 " ,dy= " + dy + " ,type=" + (type == TYPE_NON_TOUCH ? "TYPE_NON_TOUCH" : "TYPE_TOUCH"));
 
-        final RecyclerView rv = (RecyclerView) target;
-
-        if ((dy < 0 && !rv.canScrollVertically(-1))
+        if ((dy < 0 && !target.canScrollVertically(-1))
                 || (dy > 0 && this.canScrollVertically(1))) {
             Log.i(BHomeStickNavLayout.TAG, "中标消耗");
             scrollBy(0, dy);
@@ -68,8 +66,8 @@ public class BHomeStickNavLayout extends NestedScrollView2  {
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        RecyclerView rv = (RecyclerView) target;
-        Log.i(BHomeStickNavLayout.TAG, "Fling, state = " + rv.getScrollState() + ",velocityY=" + velocityY + ", consumed=" + consumed);
+//        RecyclerView rv = (RecyclerView) target;
+//        Log.i(BHomeStickNavLayout.TAG, "Fling, state = " + rv.getScrollState() + ",velocityY=" + velocityY + ", consumed=" + consumed);
         return super.onNestedFling(target, velocityX, velocityY, consumed);
     }
 
