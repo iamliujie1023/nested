@@ -1,1 +1,17 @@
+.gradle
+bin
+*.properties
+.DS_Store
+*.iml
+.idea
+gradle
+gradlew
+gradlew.bat
+gen
+beibei_out
+*.apk
+Beibei-release
 /build
+/*/build/
+/librarys/*/build
+BuglyUploadLog.txt
