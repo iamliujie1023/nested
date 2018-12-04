@@ -30,12 +30,14 @@ public class NestedScrollView2 extends NestedScrollView implements NestedScrolli
     @Override
     public boolean onStartNestedScroll(
             @NonNull View child, @NonNull View target, int axes, int type) {
+        Log.i("liujie", "onStartNestedScroll");
         return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(
             @NonNull View child, @NonNull View target, int axes, int type) {
+        Log.i("liujie", "onNestedScrollAccepted");
         parentHelper.onNestedScrollAccepted(child, target, axes);
         startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, type);
     }
@@ -43,6 +45,15 @@ public class NestedScrollView2 extends NestedScrollView implements NestedScrolli
     @Override
     public void onNestedPreScroll(
             @NonNull View target, int dx, int dy, @Nullable int[] consumed, int type) {
+//        Log.i("liujie", "onNestedPreScroll");
+        if (type == TYPE_NON_TOUCH &&
+                (dy > 0 && !this.canScrollVertically(1) && !target.canScrollVertically(1)) ||
+                (dy < 0 && !this.canScrollVertically(-1) && !target.canScrollVertically(-1))) {
+            if (target instanceof NestedScrollingChild2) {
+                ((NestedScrollingChild2) target).stopNestedScroll(type);
+                return;
+            }
+        }
         dispatchNestedPreScroll(dx, dy, consumed, null, type);
     }
 
@@ -70,6 +81,7 @@ public class NestedScrollView2 extends NestedScrollView implements NestedScrolli
     public void onStopNestedScroll(@NonNull View target, int type) {
         parentHelper.onStopNestedScroll(target, type);
         stopNestedScroll(type);
+        Log.i("liujie", "onStopNestedScroll");
     }
 
     // NestedScrollingParent methods. For the most part these methods delegate

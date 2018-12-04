@@ -1,9 +1,7 @@
 package com.liuj.demo.nestedscroll;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -11,15 +9,11 @@ import android.view.View;
 
 import static android.support.v4.view.ViewCompat.TYPE_NON_TOUCH;
 
-/**
- *
- */
-public class BHomeStickNavLayout extends NestedScrollView2  {
+public class BHomeStickNavLayout extends NestedScrollView2 {
 
     public static final String TAG = "BHomeStickNavLayout";
 
-    private RecyclerView mRv;
-    private ViewPager mViewPager;
+    private View mTargetView;
 
     public BHomeStickNavLayout(Context context) {
         this(context, null);
@@ -33,8 +27,17 @@ public class BHomeStickNavLayout extends NestedScrollView2  {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mViewPager = this.findViewWithTag("view_page");
-        mViewPager.addOnPageChangeListener(mOnPageChangeListener);
+    }
+
+    @Override
+    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes, int type) {
+        super.onNestedScrollAccepted(child, target, axes, type);
+        mTargetView = target;
+    }
+
+    @Override
+    public void stopNestedScroll(int type) {
+        super.stopNestedScroll(type);
     }
 
     //先于child滚动
@@ -52,6 +55,14 @@ public class BHomeStickNavLayout extends NestedScrollView2  {
             consumed[1] = dy;
         }
 
+//        if (type == TYPE_NON_TOUCH &&
+//                (dy > 0 && !this.canScrollVertically(1) && !target.canScrollVertically(1)) ||
+//                (dy < 0 && !this.canScrollVertically(-1) && !target.canScrollVertically(-1))) {
+//            if (target instanceof RecyclerView) {
+//                ((RecyclerView) target).stopScroll();
+//                return;
+//            }
+//        }
         super.onNestedPreScroll(target, dx, dy, consumed, type);
     }
 
@@ -65,51 +76,13 @@ public class BHomeStickNavLayout extends NestedScrollView2  {
     }
 
     @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-//        RecyclerView rv = (RecyclerView) target;
-//        Log.i(BHomeStickNavLayout.TAG, "Fling, state = " + rv.getScrollState() + ",velocityY=" + velocityY + ", consumed=" + consumed);
-        return super.onNestedFling(target, velocityX, velocityY, consumed);
-    }
-
-    @Override
     public void fling(int velocityY) {
         Log.i(BHomeStickNavLayout.TAG, "fling()");
-        if (mRv != null) {
-            mRv.fling(mRv.getScrollX(), velocityY);
+        if (mTargetView instanceof RecyclerView) {
+            ((RecyclerView) mTargetView).fling(mTargetView.getScrollX(), velocityY);
             return;
         }
         super.fling(velocityY);
     }
-
-    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            Log.i("liujie", " onPageSelected pos=" + position);
-            FragmentPagerAdapter adapter = (FragmentPagerAdapter) mViewPager.getAdapter();
-            Fragment fragment = adapter.getItem(position);
-            if (null != fragment) {
-                mRv = fragment.getView().findViewWithTag("recycleview");
-            }
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
-    };
-
-    public void init() {
-        Log.i("liujie", " init pos=" + 0);
-        FragmentPagerAdapter adapter = (FragmentPagerAdapter) mViewPager.getAdapter();
-        Fragment fragment = adapter.getItem(0);
-        if (null != fragment) {
-            mRv = fragment.getView().findViewWithTag("recycleview");
-        }
-    }
-
 
 }

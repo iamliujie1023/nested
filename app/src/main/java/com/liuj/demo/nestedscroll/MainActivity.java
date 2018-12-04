@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
                 mViewpager.setLayoutParams(params);
                 mIdStickynavlayoutContainer.forceLayout();
-                mIdStickynavlayoutContainer.init();
             }
         });
 
